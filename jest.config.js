@@ -27,8 +27,8 @@ module.exports = {
     'packages/*/src/*.{js,jsx}',
   ],
   moduleNameMapper: {
-    '^fetchye-redux-provider$': '<rootDir>/packages/fetchye-redux-provider/src/index.js',
-    '^fetchye$': '<rootDir>/packages/fetchye/src/index.js',
+    '^fetchye-redux-provider$': '<rootDir>/packages/fetchye-redux-provider/src/index.ts',
+    '^fetchye$': '<rootDir>/packages/fetchye/src/index.ts',
   },
   coveragePathIgnorePatterns: ['packages/fetchye-test-utils/src/testCacheInterface.js'],
 };

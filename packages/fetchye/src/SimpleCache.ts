@@ -21,15 +21,30 @@ import {
   ERROR,
   CLEAR_ERROR,
   ACTION_NAMESPACE,
-
+  type FetchyeAction,
+  type FetchyeCache,
+  type FetchyeSelectedValues,
 } from 'fetchye-core';
+import invariant from 'invariant';
+import type { Reducer } from 'redux';
+
+export type SimpleCacheState = {
+  errors: Record<string, Error | unknown>,
+  loading: Record<string, string>,
+  data: Record<string, unknown>,
+}
+
+/* eslint-disable @typescript-eslint/no-unused-vars -- throughout this file variables of form
+* `deleted<VariableName>` are used to explicitly indicate to the user which element
+* is being descructured from our state for disposal. These variables are named for humans, then
+* explcitly never used to discard them. */
 
 // eslint-disable-next-line default-param-last -- the first default param value takes care of explicitly calling this function with `undefined` the second param can't be defaulted as it must be provided
-function reducer(state = {
+const reducer: Reducer<SimpleCacheState, FetchyeAction> = (state = {
   errors: {},
   loading: {},
   data: {},
-}, action) {
+}, action) => {
   if (!action.type.startsWith(ACTION_NAMESPACE)) {
     return state;
   }
@@ -98,20 +113,44 @@ function reducer(state = {
     default:
       return state;
   }
+};
+
+/* eslint-enable @typescript-eslint/no-unused-vars -- enable for disable */
+
+export type SimpleCacheShape = {
+  errors?: Record<string, Error>, // todo cross check, is an error an Error, or a string?
+  loading?: Record<string, string>,
+  data?: Record<string, unknown>,
 }
 
-const getCacheByKey = (cache = {}, key = undefined) => {
-  const data = cache.data?.[key];
-  const loading = !!cache.loading?.[key];
-  const error = cache.errors?.[key];
+type GetCacheByKey = (cache: SimpleCacheShape, key: string | undefined) => FetchyeSelectedValues;
+
+const getCacheByKey: GetCacheByKey = (cache = {}, key = undefined) => {
+  invariant(key, 'key must be provided to getCacheByKey');
+  const data = cache.data?.[key as string];
+  const loading = !!cache.loading?.[key as string];
+  const error = cache.errors?.[key as string];
   return { data, loading, error };
 };
 
-function SimpleCache({ cacheSelector = (state) => state } = {}) {
-  return {
-    getCacheByKey,
-    reducer,
-    cacheSelector,
-  };
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any -- Since the cache is a socket
+* we have no way of knowing at this point what the cache will look like
+* But its actually only important to use that the selector returns a FetchyeCacheShape */
+export type CacheSelector = (state: any) => SimpleCacheShape;
+
+export type SimpleCache = {
+  getCacheByKey: GetCacheByKey,
+  reducer: Reducer<SimpleCacheState, FetchyeAction>,
+  cacheSelector: CacheSelector,
 }
+
+const defaultCacheSelector: CacheSelector = (state: SimpleCacheShape) => state;
+
+const SimpleCache = (
+  { cacheSelector = defaultCacheSelector }: {cacheSelector?: CacheSelector} = {}
+): FetchyeCache<SimpleCacheShape, SimpleCacheState> => ({
+  getCacheByKey,
+  reducer,
+  cacheSelector,
+});
 export default SimpleCache;

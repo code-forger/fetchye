@@ -12,11 +12,13 @@ es
 bundle.integrity.manifest.json
 .build-cache
 .env
+types
 
 # test
 test-results
 .jest-cache
 __diff_output__
+
 
 ## OSX
 #################

@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  */
 
-const mapHeaderNamesToLowerCase = (headers) => Object.entries(headers)
+const mapHeaderNamesToLowerCase = (headers: Record<string, string>): Record<string, string> => Object.entries(headers)
   .reduce((lowerCaseHeaders, [headerName, value]) => ({
     ...lowerCaseHeaders,
     [headerName.toLowerCase()]: value,

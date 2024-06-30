@@ -18,18 +18,37 @@ import {
   loadingAction,
   setAction,
   errorAction,
-
+  type FetchyeDispatch,
+  type GenericFetchClient, GenericFetcher,
 } from 'fetchye-core';
 import { handleDynamicHeaders } from './handleDynamicHeaders';
+import { ComputedKey } from './computeKey';
+import { AllOptions } from './OptionsTypeHelpers';
 
-export const runAsync = async ({
+export const runAsync = async <
+  TFetchClient extends GenericFetchClient<TFetchClient>,
+  TFetcher extends GenericFetcher<TFetchClient, TFetcher>
+>({
   dispatch, computedKey, fetcher, fetchClient, options,
-}) => {
+}: {
+  dispatch: FetchyeDispatch,
+  computedKey: ComputedKey<TFetchClient>,
+  fetcher: TFetcher,
+  fetchClient: TFetchClient,
+  options: AllOptions<TFetchClient, TFetcher>,
+}): Promise<{data: unknown, error: Error | unknown} | undefined> => {
+  if (typeof computedKey === 'boolean') {
+    return undefined;
+  }
   dispatch(loadingAction({ hash: computedKey.hash }));
   const {
     payload: data,
     error: requestError,
-  } = await fetcher(fetchClient, computedKey.key, handleDynamicHeaders(options));
+  } = await fetcher(
+    fetchClient,
+    computedKey.key,
+    handleDynamicHeaders(options)
+  );
   if (!requestError) {
     dispatch(setAction({ hash: computedKey.hash, value: data }));
   } else {

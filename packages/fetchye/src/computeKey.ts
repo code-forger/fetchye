@@ -15,28 +15,55 @@
  */
 
 import computeHash from 'object-hash';
+import {
+  GenericFetchClient, GenericFetcher,
+  KeyFromFetchClient,
+} from 'fetchye-core';
 import mapHeaderNamesToLowerCase from './mapHeaderNamesToLowerCase';
 import { defaultMapOptionsToKey } from './defaultMapOptionsToKey';
 import { handleDynamicHeaders } from './handleDynamicHeaders';
+import {
+  AllOptions,
+  PostMapOptions,
+} from './OptionsTypeHelpers';
 
-export const computeKey = (key, {
-  mapOptionsToKey = (options) => options,
-  ...options
-} = {}) => {
+export type ComputedKey<TFetchClient extends GenericFetchClient<TFetchClient>> = boolean
+  | {key:KeyFromFetchClient<TFetchClient>, hash: string}
+
+export type CallableKey<
+  TFetchClient extends GenericFetchClient<TFetchClient>,
+  TFetcher extends GenericFetcher<TFetchClient, TFetcher>
+> = ((options: AllOptions<TFetchClient, TFetcher>) => KeyFromFetchClient<TFetchClient>)
+  | KeyFromFetchClient<TFetchClient>;
+
+export const computeKey = <
+  TFetchClient extends GenericFetchClient<TFetchClient>,
+  TFetcher extends GenericFetcher<TFetchClient, TFetcher>
+>(
+    key: CallableKey<TFetchClient, TFetcher>,
+    allOptions: AllOptions<TFetchClient, TFetcher>): ComputedKey<TFetchClient> => {
+  const {
+    mapOptionsToKey = (options) => options as PostMapOptions,
+  } = allOptions;
+
   const {
     headers,
     mapKeyToCacheKey,
     ...restOfOptions
-  } = defaultMapOptionsToKey(mapOptionsToKey(handleDynamicHeaders(options)));
+  } = defaultMapOptionsToKey(
+    mapOptionsToKey(
+      handleDynamicHeaders<TFetchClient, TFetcher>(allOptions))
+  );
 
-  const nextOptions = { ...restOfOptions };
+  const nextOptions: PostMapOptions = { ...restOfOptions };
   if (headers) {
     nextOptions.headers = mapHeaderNamesToLowerCase(headers);
   }
 
-  let nextKey = key;
+  let nextKey: KeyFromFetchClient<TFetchClient>;
   if (typeof key === 'function') {
     try {
+      // @ts-expect-error -- We have just type checked this to ensure it is a function
       nextKey = key(nextOptions);
     } catch (error) {
       return false;
@@ -44,6 +71,8 @@ export const computeKey = (key, {
     if (!nextKey) {
       return false;
     }
+  } else {
+    nextKey = key;
   }
 
   let cacheKey = nextKey;

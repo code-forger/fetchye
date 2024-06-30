@@ -16,8 +16,29 @@
 
 export * from './constants';
 export * from './actions';
-export { defaultEqualityChecker } from './defaultEqualityChecker';
-export { FetchyeContext } from './FetchyeContext';
-export { defaultFetcher } from './defaultFetcher';
+export { defaultEqualityChecker, type EqualityChecker } from './defaultEqualityChecker';
+export {
+  FetchyeContext,
+  type FetchyeContextType,
+  type UseFetchyeSelector,
+  type Nullable,
+  type FetchyeCache,
+  type GetCacheByKey,
+  type FetchyeSelectedValues,
+  type FetchyeDispatch,
+} from './FetchyeContext';
+export {
+  defaultFetcher,
+  type FetchClient,
+  type Fetcher,
+  type DefaultFetchClient,
+  type OptionsFromFetchClient,
+  type KeyFromFetchClient,
+  type GenericFetchClient,
+  type DefaultFetcher,
+  type GenericFetcher,
+  type GenericDefaultFetcher,
+  type AdditionalOptionsFromFetcher,
+} from './defaultFetcher';
 export { ssrFetcher } from './ssrFetcher';
-export { default as useSubscription } from './useSubscription';
+export { default as useSubscription, type Notify, type Subscribe } from './useSubscription';

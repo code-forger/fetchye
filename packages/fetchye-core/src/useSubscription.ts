@@ -16,15 +16,19 @@
 
 import { useRef } from 'react';
 
-const useSubscription = () => {
-  const subscribers = useRef(new Set());
+export type SubscriptionCallback = () => void;
+export type Notify = () => void;
+export type Subscribe = (callback: SubscriptionCallback) => () => void;
+
+const useSubscription = (): [Notify, Subscribe] => {
+  const subscribers = useRef<Set<SubscriptionCallback>>(new Set());
   return [
     function notify() {
       subscribers.current.forEach((callback) => {
         callback();
       });
     },
-    function subscribe(callback) {
+    function subscribe(callback: SubscriptionCallback) {
       subscribers.current.add(callback);
       return () => {
         subscribers.current.delete(callback);

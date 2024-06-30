@@ -9,6 +9,7 @@
     "lib",
     "es"
   ],
+  "types": "types/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/americanexpress/fetchye.git",
@@ -21,9 +22,10 @@
   "scripts": {
     "clean": "rimraf lib && rimraf es",
     "prebuild": "yarn clean",
-    "build:cjs": "cross-env BABEL_ENV=commonjs babel --extensions .js,.jsx ./src --out-dir lib",
-    "build:esm": "babel --extensions .js,.jsx ./src --out-dir es",
-    "build": "yarn build:cjs && yarn build:esm"
+    "build:cjs": "cross-env BABEL_ENV=commonjs babel --extensions .js,.jsx,.ts,.tsm ./src --out-dir lib",
+    "build:esm": "babel --extensions .js,.jsx,.ts,.tsm ./src --out-dir es",
+    "build": "yarn build:cjs && yarn build:esm",
+    "typecheck": "tsc"
   },
   "keywords": [
     "async",
@@ -54,6 +56,7 @@
   "dependencies": {
     "@babel/runtime": "^7.11.2",
     "fetchye-core": "^1.5.0",
+    "invariant": "^2.2.4",
     "object-hash": "^2.0.3",
     "prop-types": "^15.7.2"
   },
@@ -64,7 +67,12 @@
   "devDependencies": {
     "@babel/cli": "^7.12.1",
     "@babel/core": "7.11.6",
+    "@babel/preset-typescript": "^7.24.7",
     "@testing-library/react": "^11.0.4",
+    "@types/invariant": "^2.2.37",
+    "@types/node-fetch": "^2.6.11",
+    "@types/object-hash": "^3.0.6",
+    "@types/redux": "^3.6.0",
     "babel-preset-amex": "^3.4.1",
     "cross-env": "^7.0.2",
     "fetchye-test-utils": "^1.5.0",
@@ -72,6 +80,8 @@
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.1",
     "redux": "^4.0.5",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "typescript": "^5.5.2",
+    "typescript-eslint": "^7.14.1"
   }
 }

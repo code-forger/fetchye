@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 American Express Travel Related Services Company, Inc.
+ * Copyright 2021 American Express Travel Related Services Company, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,14 @@
  * permissions and limitations under the License.
  */
 
-export const isLoading = (loading, isFirstRender, options) => {
-  if (loading) {
-    return true;
-  }
-  if (isFirstRender?.current) {
-    if (options.defer) {
-      return false;
-    }
-    return true;
-  }
-  return false;
+import { DefaultFetchClient, defaultFetcher, Fetcher } from './defaultFetcher';
+
+export const ssrFetcher: Fetcher<DefaultFetchClient, Record<string, never>> = async (...params) => {
+  const { payload } = await defaultFetcher(...params);
+  return {
+    payload,
+    error: null,
+  };
 };
+
+export default ssrFetcher;

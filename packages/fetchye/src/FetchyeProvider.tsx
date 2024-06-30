@@ -19,15 +19,31 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import {
-  defaultEqualityChecker, useSubscription, defaultFetcher, FetchyeContext,
+  defaultEqualityChecker,
+  useSubscription,
+  defaultFetcher,
+  FetchyeContext,
+  FetchyeCache,
+  GenericFetchClient,
+  EqualityChecker,
+  FetchyeContextType,
+  GenericFetcher, Subscribe, GetCacheByKey,
 
 } from 'fetchye-core';
 import SimpleCache from './SimpleCache';
-import useRefReducer from './useRefReducer';
+import useRefReducer, { ReducerRefState } from './useRefReducer';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- See 'External Caches are untyped' in the TSNOTES.md file
+type UntypedCacheShape = any;
 
 const makeUseFetchyeSelector = ({
   fetchyeState, subscribe, getCacheByKey, equalityChecker,
-}) => (key) => {
+}: {
+  fetchyeState: ReducerRefState,
+  subscribe: Subscribe,
+  getCacheByKey: GetCacheByKey<UntypedCacheShape>,
+  equalityChecker: EqualityChecker,
+}) => (key: string | undefined) => {
   const [, forceRender] = useReducer((n) => n + 1, 0);
   const initialValue = getCacheByKey(fetchyeState.current, key);
   const lastSelectorValue = useRef(initialValue);
@@ -51,18 +67,35 @@ const makeUseFetchyeSelector = ({
   return selectorValue;
 };
 
-const FetchyeProvider = ({
-  cache = SimpleCache(),
-  fetcher = defaultFetcher,
-  equalityChecker = defaultEqualityChecker,
-  fetchClient = fetch,
-  initialData = cache.reducer(undefined, { type: '' }),
-  children,
-}) => {
+type FetchyeProviderProps<
+  TFetchClient extends GenericFetchClient<TFetchClient>,
+  TFetcher extends GenericFetcher<TFetchClient, TFetcher>
+> = {
+  cache: FetchyeCache,
+  fetcher: TFetcher,
+  equalityChecker: EqualityChecker,
+  fetchClient: TFetchClient,
+  initialData: Record<string, unknown>,
+  children: React.ReactNode,
+}
+
+const FetchyeProvider = <
+  TFetchClient extends GenericFetchClient<TFetchClient>,
+  TFetcher extends GenericFetcher<TFetchClient, TFetcher>
+>({
+    cache = SimpleCache(),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- see message in `useFetchyeContext` about why this 'as any as' is needed while applying defaults
+    fetcher = defaultFetcher as any as TFetcher,
+    equalityChecker = defaultEqualityChecker,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- see message in `useFetchyeContext` about why this 'as any as' is needed while applying defaults
+    fetchClient = fetch as any as TFetchClient,
+    initialData = cache.reducer(undefined, { type: '' }),
+    children,
+  }: FetchyeProviderProps<TFetchClient, TFetcher>) => {
   const [notify, subscribe] = useSubscription();
   const [fetchyeState, dispatch] = useRefReducer(cache.reducer, initialData, notify);
 
-  const memoizedConfig = useMemo(() => ({
+  const memoizedConfig: FetchyeContextType<TFetchClient, TFetcher> = useMemo(() => ({
     dispatch,
     cache,
     defaultFetcher: fetcher,

@@ -14,7 +14,18 @@
  * permissions and limitations under the License.
  */
 
-export const handleDynamicHeaders = (options) => {
+import { GenericFetchClient, GenericFetcher } from 'fetchye-core';
+import {
+} from './computeKey';
+import { AllOptions, ResolvedAllOptions } from './OptionsTypeHelpers';
+
+// todo crosscheck, return should not be FetchyeExtendedOptions in other contextx
+export const handleDynamicHeaders = <
+  TFetchClient extends GenericFetchClient<TFetchClient>,
+  TFetcher extends GenericFetcher<TFetchClient, TFetcher>
+>(
+    options: AllOptions<TFetchClient, TFetcher>
+  ): ResolvedAllOptions<TFetchClient, TFetcher> => {
   if (typeof options.headers === 'function') {
     return {
       ...options,

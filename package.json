@@ -24,6 +24,8 @@
     "@babel/polyfill": "^7.10.4",
     "@commitlint/cli": "^9.1.1",
     "@commitlint/config-conventional": "^9.1.1",
+    "@typescript-eslint/eslint-plugin": "^6.7.3",
+    "@typescript-eslint/parser": "^6.7.3",
     "amex-jest-preset-react": "^6.1.0",
     "babel-preset-amex": "^3.4.1",
     "core-js-compat": "3.6.5",

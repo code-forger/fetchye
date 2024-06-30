@@ -14,12 +14,20 @@
  * permissions and limitations under the License.
  */
 
-import { useRef } from 'react';
+import { type MutableRefObject, useRef } from 'react';
+import { FetchyeAction, FetchyeDispatch, Notify } from 'fetchye-core';
+import type { Reducer } from 'redux';
 
-const useRefReducer = (reducer, initialState, notify) => {
+export type ReducerRefState = MutableRefObject<Record<string, unknown>>;
+
+const useRefReducer = (
+  reducer: Reducer<Record<string, unknown>,
+    FetchyeAction>, initialState: Record<string, unknown>,
+  notify: Notify
+): [ReducerRefState, FetchyeDispatch] => {
   const state = useRef(initialState);
 
-  const dispatch = (action) => {
+  const dispatch: FetchyeDispatch = (action: FetchyeAction) => {
     state.current = reducer(state.current, action);
     notify();
   };

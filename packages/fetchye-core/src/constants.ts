@@ -14,57 +14,9 @@
  * permissions and limitations under the License.
  */
 
-import {
-  IS_LOADING,
-  SET_DATA,
-  DELETE_DATA,
-  ERROR,
-  CLEAR_ERROR,
-} from './constants';
-
-export function loadingAction({
-  hash,
-}) {
-  return {
-    type: IS_LOADING,
-    hash,
-  };
-}
-
-export function setAction({
-  hash, value,
-}) {
-  return {
-    type: SET_DATA,
-    hash,
-    value,
-  };
-}
-
-export function deleteAction({
-  hash,
-}) {
-  return {
-    type: DELETE_DATA,
-    hash,
-  };
-}
-
-export function errorAction({
-  hash, error,
-}) {
-  return {
-    type: ERROR,
-    hash,
-    error,
-  };
-}
-
-export function clearErrorsAction({
-  hash,
-}) {
-  return {
-    type: CLEAR_ERROR,
-    hash,
-  };
-}
+export const ACTION_NAMESPACE = '@fetchye' as const;
+export const IS_LOADING = `${ACTION_NAMESPACE}/IS_LOADING` as const;
+export const SET_DATA = `${ACTION_NAMESPACE}/SET_DATA` as const;
+export const DELETE_DATA = `${ACTION_NAMESPACE}/DELETE_DATA` as const;
+export const ERROR = `${ACTION_NAMESPACE}/ERROR` as const;
+export const CLEAR_ERROR = `${ACTION_NAMESPACE}/CLEAR_ERROR` as const;

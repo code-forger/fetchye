@@ -14,8 +14,19 @@
  * permissions and limitations under the License.
  */
 
-export const isLoading = ({
-  loading, data, numOfRenders, options,
+import { GenericFetchClient, GenericFetcher } from 'fetchye-core';
+import { AllOptions } from './OptionsTypeHelpers';
+
+export const isLoading = <
+  TFetchClient extends GenericFetchClient<TFetchClient>,
+  TFetcher extends GenericFetcher<TFetchClient, TFetcher>
+>({
+    loading, data, numOfRenders, options,
+  }: {
+  loading: boolean,
+  data: unknown,
+  numOfRenders: number,
+  options: AllOptions<TFetchClient, TFetcher>
 }) => {
   // If first render
   if (numOfRenders === 1) {
@@ -39,7 +50,7 @@ export const isLoading = ({
   return false;
 };
 
-export const coerceSsrField = (field) => {
+export const coerceSsrField = (field: unknown | Error) => {
   if (!field) {
     return null;
   }

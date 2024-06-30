@@ -14,13 +14,16 @@
  * permissions and limitations under the License.
  */
 
-// eslint-disable-next-line default-param-last -- the first default param value takes care of explicitly calling this function with `undefined` the second param can't be defaulted as it must be provided
-export const getCacheByKey = (cache = {}, computedKey) => {
-  const unpackedCache = cache.toJS ? cache.toJS() : cache;
-  const data = unpackedCache.data?.[computedKey.hash];
-  const loading = !!unpackedCache.loading && unpackedCache.loading.includes(computedKey.hash);
-  const error = unpackedCache.errors?.[computedKey.hash];
-  return { data, loading, error };
-};
+import { FetchyeSelectedValues } from './FetchyeContext';
 
-export default getCacheByKey;
+export type EqualityChecker = (
+  a: FetchyeSelectedValues,
+  b: FetchyeSelectedValues
+) => boolean;
+
+export const defaultEqualityChecker: EqualityChecker = (
+  a,
+  b
+) => a.data === b.data
+&& a.error === b.error
+&& a.loading === b.loading;

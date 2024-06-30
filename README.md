@@ -790,7 +790,7 @@ const ParentComponent = ({ children }) => (
 );
 ```
 
-> 💡 Check out [Actions API docs](#actions) and [`SimpleCache.js`](./src/cache/SimpleCache.js) source file. These will give you insights into the actions used in the reducer and practical examples on a working Cache configuration.
+> 💡 Check out [Actions API docs](#actions) and [`SimpleCache.ts`](./src/cache/SimpleCache.js) source file. These will give you insights into the actions used in the reducer and practical examples on a working Cache configuration.
 
 ## 🎛️ API
 

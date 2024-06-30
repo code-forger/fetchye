@@ -14,19 +14,28 @@
  * permissions and limitations under the License.
  */
 
-const filterObjectByKeys = (object, keys) => Object.keys(object)
+const filterObjectByKeys = (object: Record<string, string>, keys: string[]) => Object.keys(object)
   .filter((key) => !keys.includes(key))
-  .reduce((acc, key) => {
+  .reduce((acc: Record<string, unknown>, key) => {
     // mutating accumulator to prevent many, many object allocations
     acc[key] = object[key];
     return acc;
   }, {});
 
-export const ignoreHeadersByKey = (keys) => ({ headers, ...options }) => (
-  headers
-    ? {
-      ...options,
-      headers: filterObjectByKeys(headers, keys),
-    }
-    : { ...options }
-);
+const headersInitToRecord = (headersInit: HeadersInit)
+  : Record<string, string> => Object.fromEntries(new Headers(headersInit).entries());
+
+export const ignoreHeadersByKey = (keys: string[]) => (options: {
+  headers?: HeadersInit}): {
+  [key: string]: unknown,
+} => {
+  const { headers } = options;
+  return (
+    headers
+      ? {
+        ...options,
+        headers: filterObjectByKeys(headersInitToRecord(headers), keys),
+      }
+      : options
+  );
+};

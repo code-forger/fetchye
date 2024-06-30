@@ -1,7 +1,24 @@
 {
-  "extends": "amex",
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "amex",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "plugins": [
+    "@typescript-eslint"
+  ],
   "rules": {
-    "unicorn/prevent-abbreviations": "off"
+    "unicorn/prevent-abbreviations": "off",
+    "import/extensions": "off",
+    "react/jsx-filename-extension": [2, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }]
   },
-  "ignorePatterns": ["examples/**"]
+  "ignorePatterns": ["examples/**"],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  }
 }
